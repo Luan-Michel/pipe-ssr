@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\Genome;
 use App\Models\Organism;
 use App\Models\File;
+use App\Models\LibraryType;
 
 
 class ProjectController extends Controller
@@ -120,7 +121,8 @@ class ProjectController extends Controller
 
     public function step3(string $id)
     {
-        return view('projects.step3', compact('id'));
+        $library_types = LibraryType::all();
+        return view('projects.step3', compact('id', 'library_types'));
     }
 
     /**
@@ -136,8 +138,10 @@ class ProjectController extends Controller
      */
     public function edit(string $id)
     {
-        //
-        return "Edit project $id";
+        $organisms = Organism::all();
+        $genomes = Genome::all();
+        $project = Project::find($id);
+        return view('projects.edit', compact('project', 'organisms', 'genomes'));
     }
 
     /**
@@ -145,7 +149,26 @@ class ProjectController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        //validate
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required',
+            'organism' => 'required',
+            'genome' => 'required',
+        ]);
+
+        $project = Project::find($id);
+
+        $project->title         = $request->title;
+        $project->description   = $request->description;
+        $project->status_id     = 1;
+        $project->organism_id   = $request->organism;
+        $project->genome_id     = $request->genome;
+        $project->user_id       = auth()->user()->id;
+
+        $project->save();
+
+        return redirect()->route('projects.step2', $project->id)->with('success', 'Project created successfully.');
     }
 
     /**

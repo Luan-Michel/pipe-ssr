@@ -1,5 +1,4 @@
 <x-app-layout>
-    <h1>{{ __("Create Project") }}</h1>
 
     <div>
         <div class="max-w-9xl mx-auto sm:px-6 lg:px-8">
@@ -13,18 +12,18 @@
                             <h2 class="text-2xl font-semibold text-gray-800 dark:text-white">{{ __("Project Information") }}</h2>
                             <p class="text-gray-600 dark:text-gray-400">{{ __("Fill in the information below to create a new project.") }}</p>
                         </div>
-                        <form method="post" action="{{ route('projects.store') }}" class="mt-6 space-y-6">
+                        <form method="post" action="{{ route('projects.update', $project->id) }}" class="mt-6 space-y-6">
                             @csrf
                             <div class="px-6 py-4 bg-gray-200 dark:bg-gray-700">
                                 <div class="flex flex-col lg:flex-row">
                                     <div class="w-full lg:w-1/2">
                                         <x-input-label for="title" :value="__('Title')" />
-                                        <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" required autofocus autocomplete="title" />
+                                        <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" :value="old('title', $project->title)" required autofocus autocomplete="title" />
                                         <x-input-error class="mt-2" :messages="$errors->get('title')" />
                                     </div>
                                     <div class="w-full lg:w-1/2 lg:ml-6 mt-4 lg:mt-0">
                                         <x-input-label for="description" :value="__('Description')" />
-                                        <x-text-input id="description" name="description" type="text" class="mt-1 block w-full" required autofocus autocomplete="description" />
+                                        <x-text-input id="description" name="description" type="text" class="mt-1 block w-full" :value="old('description', $project->description)" required autofocus autocomplete="description" />
                                         <x-input-error class="mt-2" :messages="$errors->get('description')" />
                                     </div>
                                 </div>
@@ -34,7 +33,11 @@
                                         <select name="organism" id="organism" class="block p-2 mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                                             <option value="" disabled selected>{{ __("Select Organism") }}</option>
                                             @foreach($organisms as $organism)
-                                                <option value="{{ $organism->id }}">{{$organism->name}}</option>
+                                                @if($organism->id == $project->organism_id)
+                                                    <option selected value="{{ $organism->id }}">{{$organism->name}}</option>
+                                                @else
+                                                    <option value="{{ $organism->id }}">{{$organism->name}}</option>
+                                                @endif
                                             @endforeach
                                         </select>
                                         <x-input-error :messages="$errors->get('organism_id')" class="mt-2" />
@@ -44,7 +47,11 @@
                                         <select name="genome" id="genome" class="block p-2 mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                                             <option value="" disabled selected>{{ __("Select Genome Build") }}</option>
                                             @foreach($genomes as $genome)
-                                                <option value="{{ $genome->id }}">{{$genome->name}}</option>
+                                                @if($genome->id == $project->genome_id)
+                                                    <option selected value="{{ $genome->id }}">{{$genome->name}}</option>
+                                                @else
+                                                    <option value="{{ $genome->id }}">{{$genome->name}}</option>
+                                                @endif
                                             @endforeach
                                         </select>
                                         <x-input-error :messages="$errors->get('genome_id')" class="mt-2" />

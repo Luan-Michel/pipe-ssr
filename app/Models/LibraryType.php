@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class LibraryType extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'description',
+    ];
+
+    public function samples()
+    {
+        return $this->hasMany(Sample::class);
+    }
 }

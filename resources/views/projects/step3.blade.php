@@ -64,13 +64,29 @@
             <div class="px-6 py-6 lg:px-8">
                 <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
                 <form class="space-y-6" action="#">
-                    <div>
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                        <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="name@company.com" required>
-                    </div>
-                    <div>
-                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label>
-                        <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required>
+                    <div class="flex flex-col lg:flex-row">
+                        <div class="lg:w-1/2">
+                            <div class="w-full">
+                                <x-input-label for="name" :value="__('Name')" />
+                                <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" required autofocus autocomplete="title" />
+                                <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                            </div>
+                            <div class="w-full">
+                                <x-input-label for="description" :value="__('Description')" />
+                                <x-text-input id="description" name="description" type="text" class="mt-1 block w-full" required autofocus autocomplete="title" />
+                                <x-input-error class="mt-2" :messages="$errors->get('description')" />
+                            </div>
+                            <div class="w-full">
+                                <x-input-label for="library_type_id" :value="__('Library Type')" />
+                                <select name="library_type_id" id="library_type_id" class="block p-2 mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    <option value="" disabled selected>{{ __("Select Library Type") }}</option>
+                                    @foreach($library_types as $library_type)
+                                        <option value="{{ $library_type->id }}">{{$library_type->description}}</option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('library_type_id')" class="mt-2" />
+                            </div>
+                        </div>
                     </div>
                     <div class="flex justify-between">
                         <div class="flex items-start">
