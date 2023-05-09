@@ -16,6 +16,12 @@ use App\Http\Controllers\ProjectController;
 |
 */
 
+$url = config('app.url');
+if(env('APP_ENV') == 'production'){
+    URL::forceScheme('https');
+}
+URL::forceRootUrl($url);
+
 Route::get('/', function () {
     return view('welcome');
 });
