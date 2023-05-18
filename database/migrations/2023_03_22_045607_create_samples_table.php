@@ -17,7 +17,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->unsignedBigInteger('library_type_id');
+            $table->unsignedBigInteger('project_id');
             $table->foreign('library_type_id')->references('id')->on('library_types');
+            $table->foreign('project_id')->references('id')->on('projects');
         });
     }
 

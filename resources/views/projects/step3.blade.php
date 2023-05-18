@@ -17,30 +17,37 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="px-6 py-4 bg-white dark:bg-gray-700">
+                        <div id="samples" class="px-6 py-4 bg-white dark:bg-gray-700">
                             <div class="grid grid-cols-6 gap-4">
-                                <div class="text-left text-sm font-medium text-gray-500 uppercase tracking-wider col-span-3">{{ __("Name") }}</div>
-                                <div class="text-left text-sm font-medium text-gray-500 uppercase tracking-wider">{{ __("Description") }}</div>
+                                <div class="text-left text-sm font-medium text-gray-500 uppercase tracking-wider col-span-2">{{ __("Name") }}</div>
+                                <div class="text-left text-sm font-medium text-gray-500 uppercase tracking-wider col-span-2">{{ __("Description") }}</div>
                                 <div class="text-left text-sm font-medium text-gray-500 uppercase tracking-wider">{{ __("Library Type") }}</div>
                                 <div class="text-left text-sm font-medium text-gray-500 uppercase tracking-wider">{{ __("Files") }}</div>
+                                {{-- <div class="text-left text-sm font-medium text-gray-500 uppercase tracking-wider">{{ __("Edit") }}</div> --}}
                             </div>
-                            {{-- @foreach ($projects as $project)
+                            @foreach ($samples as $sample)
                                 <div class="grid grid-cols-6 gap-4">
-                                    <div class="col-span-3">{{ $project->title }}</div>
-                                    <div class="">{{ date('Y-m-d', strtotime($project->created_at)) }}</div>
-                                    <div class="">{{ $project->status->description }}</div>
-                                    @if($project->status->id == 1)
-                                        <div class="">
-                                            <a href="{{ route('projects.show', $project->id) }}" class="text-blue-500 hover:text-blue-700">{{ __("View") }}</a>
-                                        </div>
-                                    @else
-                                        <div class="">
-                                            <a href="{{ route('projects.edit', $project->id) }}" class="text-blue-500 hover:text-blue-700">{{ __("Edit") }}</a>
-                                        </div>
-                                    @endif
+                                    <div class="col-span-2">{{ $sample->name }}</div>
+                                    <div class="col-span-2">{{ $sample->description }}</div>
+                                    <div class="">{{ $sample->library_type->description }}</div>
+                                    <div class="">
+                                        @foreach ($sample->files as $file)
+                                            {{$file->name}} <br> 
+                                        @endforeach
+                                    </div>
+                                    {{-- <div class="">
+                                        <a href="{{ route('projects.show', $project->id) }}" class="text-blue-500 hover:text-blue-700">{{ __("View") }}</a>
+                                    </div> --}}
                                 </div>
-                            @endforeach --}}
+                            @endforeach
 
+                        </div>
+                        <div class="px-6 py-4 bg-white dark:bg-gray-700">
+                            <div class="flex flex-col lg:flex-row">
+                                <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                    {{ __('Create') }}
+                                </button>
+                            </div>
                         </div>
 
 
@@ -62,8 +69,10 @@
                 <span class="sr-only">Close modal</span>
             </button>
             <div class="px-6 py-6 lg:px-8">
-                <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
-                <form class="space-y-6" action="#">
+                <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">{{ __("Add your samples") }}</h3>
+                <form id="form" class="space-y-6" action="#">
+                    @csrf
+                    <input type="hidden" name="project_id" value="{{ $id }}">
                     <div class="flex flex-col lg:flex-row">
                         <div class="lg:w-1/2">
                             <div class="w-full">
@@ -87,22 +96,81 @@
                                 <x-input-error :messages="$errors->get('library_type_id')" class="mt-2" />
                             </div>
                         </div>
-                    </div>
-                    <div class="flex justify-between">
-                        <div class="flex items-start">
-                            <div class="flex items-center h-5">
-                                <input id="remember" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required>
-                            </div>
-                            <label for="remember" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
+                        <div class="lg:w-1/2 rounded-lg border border-gray-500 m-2 p-2">
+                            <h4 class="text-1xl font-bold mb-2 ml-2">Files</h4>
+                            @foreach ($files as $file)
+                                <div class="w-full">
+                                    <div class="flex items-center mt-2 ml-2">
+                                        <input type="checkbox" class="form-checkbox" data-name="{{$file->name}}" name="file[]" value="{{$file->id}}">
+                                        <span class="text-sm ml-2">{{$file->name}}</span>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
-                        <a href="#" class="text-sm text-blue-700 hover:underline dark:text-blue-500">Lost Password?</a>
                     </div>
-                    <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login to your account</button>
-                    <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-                        Not registered? <a href="#" class="text-blue-700 hover:underline dark:text-blue-500">Create account</a>
-                    </div>
+                    <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{{ __("Add") }}</button>
                 </form>
             </div>
         </div>
     </div>
 </div> 
+
+<script type="text/javascript">
+    var form = document.getElementById('form');   
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var xhr = new XMLHttpRequest();
+        var url = "{{route('projects.insertSample')}}";
+        var async = true; // Define se a requisição será assíncrona ou não
+
+        xhr.open('POST', url, async);
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                // Função a ser executada quando a requisição estiver concluída com sucesso
+                addToList();
+            }
+        };
+
+        var formData = new FormData(form);
+        xhr.send(formData);
+    });
+
+    const addToList = () => {
+        let sample = {
+            name: document.getElementById('name').value,
+            description: document.getElementById('description').value,
+            library_type: document.getElementById('library_type_id').selectedOptions[0].text,
+            files: Array.from(document.getElementsByName('file[]')).map(function (el) {
+                return el.dataset.name;
+            }),
+        }
+
+        let element = '<div class="g    rid grid-cols-6 gap-4"> \
+            <div class="col-span-2">'+sample.name+'</div> \
+            <div class="col-span-2">'+sample.description+'</div> \
+            <div class="">'+sample.library_type+'</div> \
+            <div class="">'+sample.files.join(' - ')+'</div> \
+        </div>';
+
+        document.getElementById('samples').innerHTML += element;
+    }
+
+    const getSamples = () => {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "{{route('projects.getSamples', $id)}}", true); // Substitua 'URL_DO_BACKEND' pela URL correta do seu backend
+
+        xhr.onload = function() {
+        if (xhr.status === 200) {
+            var jsonResponse = JSON.parse(xhr.responseText);
+            // Faça algo com o JSON retornado, por exemplo:
+            console.log(jsonResponse);
+        }
+        };
+
+        xhr.send();
+    }
+
+</script>

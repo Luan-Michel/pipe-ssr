@@ -42,6 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/projects/step2/{id}', [ProjectController::class, 'step2'])->name('projects.step2');
     Route::post('/projects/uploadFile/{id}', [ProjectController::class, 'uploadFile'])->name('projects.uploadFile');
     Route::get('/projects/step3/{id}', [ProjectController::class, 'step3'])->name('projects.step3');
+    Route::post('/projects/step3/insertSample', [ProjectController::class, 'insertSample'])->name('projects.insertSample');
+    Route::get('/projects/step3/{id}/getSamples', [ProjectController::class, 'getSamples'])->name('projects.getSamples');
     Route::get('/projects/{id}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
 });
 

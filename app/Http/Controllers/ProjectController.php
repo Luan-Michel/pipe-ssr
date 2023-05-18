@@ -8,6 +8,8 @@ use App\Models\Genome;
 use App\Models\Organism;
 use App\Models\File;
 use App\Models\LibraryType;
+use App\Models\Sample;
+use App\Models\SampleFile;
 
 
 class ProjectController extends Controller
@@ -122,7 +124,33 @@ class ProjectController extends Controller
     public function step3(string $id)
     {
         $library_types = LibraryType::all();
-        return view('projects.step3', compact('id', 'library_types'));
+        $files = File::where('project_id', $id)->get();
+        $samples = Sample::where('project_id', $id)->get();
+        return view('projects.step3', compact('id', 'library_types', 'files', 'samples'));
+    }
+
+    public function insertSample(Request $request)
+    {
+        $sample = Sample::create([
+            'name'              => $request->name,
+            'description'       => $request->description,
+            'library_type_id'   => $request->library_type_id,
+            'project_id'        => $request->project_id,
+        ]);
+
+        foreach ($request->file as $key => $file_id) {
+            $sample_file = SampleFile::create([
+                'sample_id' => $sample->id,
+                'file_id'   => $file_id,
+            ]);
+        }
+
+    }
+
+    public function getSamples($id)
+    {
+        $samples = Sample::where('project_id', $id)->get();
+        return json_encode($samples);
     }
 
     /**
@@ -131,6 +159,8 @@ class ProjectController extends Controller
     public function show(string $id)
     {
         //
+        $project = Project::find($id);
+        return view('projects.show', compact('project'));
     }
 
     /**
@@ -168,7 +198,7 @@ class ProjectController extends Controller
 
         $project->save();
 
-        return redirect()->route('projects.step2', $project->id)->with('success', 'Project created successfully.');
+        return redirect()->route('projects.step2', $project->id)->with('success', 'Project updated successfully.');
     }
 
     /**

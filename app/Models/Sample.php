@@ -13,7 +13,13 @@ class Sample extends Model
         'name',
         'description',
         'library_type_id',
+        'project_id',
     ];
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
 
     public function library_type()
     {
